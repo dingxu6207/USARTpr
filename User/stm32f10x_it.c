@@ -148,15 +148,7 @@ void SysTick_Handler(void)
 // 串口中断服务函数
 extern u8 data_receive_buffer[USART_REC_LEN] ;
 void DEBUG_USART_IRQHandler(void)
-{
-    #if 0
-    uint8_t ucTemp;
-	if(USART_GetITStatus(DEBUG_USARTx,USART_IT_RXNE)!=RESET)
-	{		
-		ucTemp = USART_ReceiveData(DEBUG_USARTx);
-    USART_SendData(DEBUG_USARTx,ucTemp);    
-	}
-	#endif
+{   
 	if ( USART_GetITStatus(USART1,USART_IT_IDLE) != RESET )
 		{
       		data_receive_buffer[USART_REC_LEN-1] = USART1->SR;
@@ -169,7 +161,7 @@ void DEBUG_USART_IRQHandler(void)
 }
 
 
-u16 uCountStep = 10;
+int uCountStep = 0;
 void  BASIC_TIM_IRQHandler (void)
 {
 	if ( TIM_GetITStatus( BASIC_TIM, TIM_IT_Update) != RESET )
@@ -180,7 +172,7 @@ void  BASIC_TIM_IRQHandler (void)
 	}
 }
 
-u16 uCountStep1 = 10;
+int uCountStep1 = 0;
 void COVER_TIM_IRQHandler(void)
 {
 	if ( TIM_GetITStatus( TIM2, TIM_IT_Update) != RESET ) 

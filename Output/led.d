@@ -29,3 +29,5 @@
 ..\..\output\led.o: ..\..\Libraries\FWlib\inc\stm32f10x_usart.h
 ..\..\output\led.o: ..\..\Libraries\FWlib\inc\stm32f10x_wwdg.h
 ..\..\output\led.o: ..\..\Libraries\FWlib\inc\misc.h
+..\..\output\led.o: ..\..\User\TimBase\bsp_TiMbase.h
+..\..\output\led.o: ..\..\User\Contrlcover\bsp_TimeCover.h
