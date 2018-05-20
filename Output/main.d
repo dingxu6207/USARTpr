@@ -32,3 +32,7 @@
 ..\..\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdio.h
 ..\..\output\main.o: ..\..\User\SysTick\bsp_SysTick.h
 ..\..\output\main.o: ..\..\User\dma\dma.h
+..\..\output\main.o: ..\..\User\led\led.h
+..\..\output\main.o: ..\..\User\COMMAND\command.h
+..\..\output\main.o: ..\..\User\TimBase\bsp_TiMbase.h
+..\..\output\main.o: ..\..\User\Contrlcover\bsp_TimeCover.h

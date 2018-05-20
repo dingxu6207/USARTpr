@@ -27,6 +27,9 @@
 #include "stm32f10x_it.h"
 #include "bsp_usart.h"
 #include "bsp_SysTick.h"
+#include "bsp_TiMbase.h" 
+#include "bsp_TimeCover.h"
+
 extern void TimingDelay_Decrement(void);
 
 /** @addtogroup STM32F10x_StdPeriph_Template
@@ -164,6 +167,29 @@ void DEBUG_USART_IRQHandler(void)
 			DMA_Cmd(DMA1_Channel5,ENABLE);
 		}
 }
+
+
+u16 uCountStep = 10;
+void  BASIC_TIM_IRQHandler (void)
+{
+	if ( TIM_GetITStatus( BASIC_TIM, TIM_IT_Update) != RESET )
+	{
+    
+        uCountStep++; 					 
+		TIM_ClearITPendingBit(BASIC_TIM , TIM_FLAG_Update); 
+	}
+}
+
+u16 uCountStep1 = 10;
+void COVER_TIM_IRQHandler(void)
+{
+	if ( TIM_GetITStatus( TIM2, TIM_IT_Update) != RESET ) 
+	{
+		uCountStep1++;
+		TIM_ClearITPendingBit(TIM2 , TIM_FLAG_Update);
+	}
+}
+
 
 /**
   * @brief  This function handles PPP interrupt request.
