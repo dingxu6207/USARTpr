@@ -17,7 +17,7 @@
 #include "command.h"
 #include "bsp_TiMbase.h" 
 #include "bsp_TimeCover.h" 
-
+#include "stdbool.h"
 /**
   * @brief  主函数
   * @param  无
@@ -31,6 +31,7 @@ int main(void)
 {	
 	//s32 current_pos[2]= {0,0}, target_pos[2]= {0,0};
 	u8 decode_state=0;
+	bool runflag = false;
 	//s32 target_ra=0, target_dec=0;
 	//int ra_step=0, dec_step=0;
 
@@ -75,18 +76,15 @@ int main(void)
                     ra_step	= RA_STEP_CALCULATE(current_pos[0], target_pos[0], RA_STP_ANGLE );   //计算各轴所需步数和方向，正负号代表方向
                     dec_step = DEC_STEP_CALCULATE(current_pos[1], target_pos[1], DEC_STP_ANGLE );
                     GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+									runflag = true;
 									      
                 }
             }
           
-            if(ra_step == 0 && dec_step == 0)  //无需GOTO
-            {
-                ControlMotor(DISABLE);
-			  	      ControlCover(DISABLE);
-            }
-            else
+            if(runflag == true) 
             {				        
 						//	  GOTO( &ra_step, &dec_step);    //执行GOTO任务
+	            runflag = false;						
 							ControlMotor(ENABLE);
 			  	     ControlCover(ENABLE);
                // current_pos[0] = CURRENT_POS_RA ( target_ra, ra_step, RA_STP_ANGLE );   //更新当前指向
