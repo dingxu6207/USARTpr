@@ -24,21 +24,21 @@ void LEDINIT(void)
     GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);			
 }
 
-extern int uCountStep ;
-extern int uCountStep1;
+extern u8 uCountStep ;
+extern u8 uCountStep1;
 
 void GOTO ( int *ra_step, int *dec_step)  //按计算结果移动步进电机
 {
-     u16 ra_overflows = 10, dec_overflows = 10;
+     u8 ra_overflows = 8, dec_overflows = 8;
 
 	ControlMotor(ENABLE);
 	ControlCover(ENABLE);
     if((*ra_step) == 0 )	//到位了就切换到RA正常速度跟踪
-    {
-		ControlCover(DISABLE);
+    {		
+		ControlMotor(DISABLE);
     }
 
-     if((*dec_step) == 0 )	//到位了就切换到RA正常速度跟踪
+     if((*dec_step) == 0 )	//到位了DEC停止
     {
 		ControlCover(DISABLE);
     }
@@ -49,24 +49,28 @@ void GOTO ( int *ra_step, int *dec_step)  //按计算结果移动步进电机
         if ( (*ra_step) > 0 )
         {
             (*ra_step)--;
+			GPIO_SetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);
         }
         if ( (*ra_step) < 0 )
         {
             (*ra_step)++;
+            GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);
         }
     }
 
    if(uCountStep1 > dec_overflows) //DEC轴运动标志置位及按运动情况修改记步数据
-    {
+   {
         uCountStep1 = 1;
         if ( (*dec_step) > 0 )
         {
             (*dec_step)--;
+             GPIO_SetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
         }
         if ( (*dec_step) < 0 )
         {
             (*dec_step)++;
+            GPIO_ResetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
         }
-    }
+   }
 	
 }

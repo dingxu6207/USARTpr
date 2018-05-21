@@ -24,13 +24,15 @@
   * @retval 无
   */
 u8 data_receive_buffer[USART_REC_LEN];  //来自于串口DMA输入
-
+int ra_step=0, dec_step=0;
+s32 current_pos[2]= {0,0}, target_pos[2]= {0,0};
+s32 target_ra=0, target_dec=0;
 int main(void)
 {	
-	s32 current_pos[2]= {0,0}, target_pos[2]= {0,0};
+	//s32 current_pos[2]= {0,0}, target_pos[2]= {0,0};
 	u8 decode_state=0;
-	s32 target_ra=0, target_dec=0;
-	int ra_step=0, dec_step=0;
+	//s32 target_ra=0, target_dec=0;
+	//int ra_step=0, dec_step=0;
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE); 
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
@@ -48,7 +50,7 @@ int main(void)
     Cover_TIM_Init();
 
     SetSpeed(1000);
-	SetSpeedCover(100);
+	SetSpeedCover(1000);
 	
  	while(1)
 	{	
@@ -73,20 +75,22 @@ int main(void)
                     ra_step	= RA_STEP_CALCULATE(current_pos[0], target_pos[0], RA_STP_ANGLE );   //计算各轴所需步数和方向，正负号代表方向
                     dec_step = DEC_STEP_CALCULATE(current_pos[1], target_pos[1], DEC_STP_ANGLE );
                     GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);
-                    
+									      
                 }
             }
-
+          
             if(ra_step == 0 && dec_step == 0)  //无需GOTO
             {
                 ControlMotor(DISABLE);
-			  	ControlCover(DISABLE);
+			  	      ControlCover(DISABLE);
             }
             else
-            {
-				GOTO( &ra_step, &dec_step);    //执行GOTO任务
-                current_pos[0] = CURRENT_POS_RA ( target_ra, ra_step, RA_STP_ANGLE );   //更新当前指向
-                current_pos[1] = CURRENT_POS_DEC ( target_dec, dec_step, DEC_STP_ANGLE );
+            {				        
+						//	  GOTO( &ra_step, &dec_step);    //执行GOTO任务
+							ControlMotor(ENABLE);
+			  	     ControlCover(ENABLE);
+               // current_pos[0] = CURRENT_POS_RA ( target_ra, ra_step, RA_STP_ANGLE );   //更新当前指向
+               // current_pos[1] = CURRENT_POS_DEC ( target_dec, dec_step, DEC_STP_ANGLE );
             }
      
         }

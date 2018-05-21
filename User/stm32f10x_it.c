@@ -29,6 +29,9 @@
 #include "bsp_SysTick.h"
 #include "bsp_TiMbase.h" 
 #include "bsp_TimeCover.h"
+#include "led.h"
+#include "stdbool.h"
+#include "command.h"
 
 extern void TimingDelay_Decrement(void);
 
@@ -161,23 +164,73 @@ void DEBUG_USART_IRQHandler(void)
 }
 
 
-int uCountStep = 0;
-void  BASIC_TIM_IRQHandler (void)
+u8 uCountStep = 1;
+bool ledflag = true;
+extern int ra_step, dec_step;
+extern s32 current_pos[2], target_pos[2];
+extern s32 target_ra, target_dec;
+void BASIC_TIM_IRQHandler (void)
 {
 	if ( TIM_GetITStatus( BASIC_TIM, TIM_IT_Update) != RESET )
 	{
-    
-        uCountStep++; 					 
-		TIM_ClearITPendingBit(BASIC_TIM , TIM_FLAG_Update); 
+        uCountStep++;
+		    
+	 if(uCountStep > 8) //RA轴运动标志置位及按运动情况修改记步数据
+    {
+        uCountStep = 1;
+        if ( (ra_step) > 0 )
+        {
+            (ra_step)--;
+			GPIO_SetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);
+        }
+        if ( (ra_step) < 0 )
+        {
+            (ra_step)++;
+            GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);
+        }
+    }
+		
+     if((ra_step) == 0 )	//到位了就切换到RA正常速度跟踪
+    {		
+		ControlMotor(DISABLE);
+    }
+		
+		 current_pos[0] = CURRENT_POS_RA ( target_ra, ra_step, RA_STP_ANGLE );   //更新当前指向
+		
+		    TIM_ClearITPendingBit(BASIC_TIM , TIM_FLAG_Update); 
 	}
 }
 
-int uCountStep1 = 0;
+u8 uCountStep1 = 1;
+
 void COVER_TIM_IRQHandler(void)
 {
 	if ( TIM_GetITStatus( TIM2, TIM_IT_Update) != RESET ) 
 	{
-		uCountStep1++;
+		   uCountStep1++;
+		   // u8 dec_overflows = 8
+       if(uCountStep1 > 8) //DEC轴运动标志置位及按运动情况修改记步数据
+   {
+        uCountStep1 = 1;
+        if ( (dec_step) > 0 )
+        {
+            (dec_step)--;
+             GPIO_SetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
+        }
+        if ( (dec_step) < 0 )
+        {
+            (dec_step)++;
+            GPIO_ResetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
+        }
+
+   }
+				if (dec_step == 0)
+				{
+            ControlCover(DISABLE);
+				}
+				
+				current_pos[1] = CURRENT_POS_DEC ( target_dec, dec_step, DEC_STP_ANGLE );
+				
 		TIM_ClearITPendingBit(TIM2 , TIM_FLAG_Update);
 	}
 }
