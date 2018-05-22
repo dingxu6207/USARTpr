@@ -85,8 +85,8 @@ int main(void)
 	            runflag = false;						
 							ControlMotor(ENABLE);
 			  	     ControlCover(ENABLE);
-							SetSpeed(1000);
-							SetSpeedCover(1000);
+							SetSpeed(2000);
+							SetSpeedCover(2000);
                // current_pos[0] = CURRENT_POS_RA ( target_ra, ra_step, RA_STP_ANGLE );   //更新当前指向
                // current_pos[1] = CURRENT_POS_DEC ( target_dec, dec_step, DEC_STP_ANGLE );
             }
