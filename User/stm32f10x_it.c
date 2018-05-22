@@ -192,7 +192,10 @@ void BASIC_TIM_IRQHandler (void)
 		
      if((ra_step) == 0 )	//到位了就切换到RA正常速度跟踪
     {		
-		ControlMotor(DISABLE);
+			//ControlMotor(DISABLE);
+			SetSpeed(12);
+			uCountStep = 1;
+			GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);
     }
 		
 		 current_pos[0] = CURRENT_POS_RA ( target_ra, ra_step, RA_STP_ANGLE );   //更新当前指向
