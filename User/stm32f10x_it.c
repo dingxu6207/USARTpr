@@ -181,12 +181,13 @@ void BASIC_TIM_IRQHandler (void)
         if ( (ra_step) > 0 )
         {
             (ra_step)--;
-			GPIO_SetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);
+		         GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);
         }
         if ( (ra_step) < 0 )
         {
             (ra_step)++;
-            GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);
+           
+					  GPIO_SetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);
         }
     }
 		
@@ -218,12 +219,13 @@ void COVER_TIM_IRQHandler(void)
         if ( (dec_step) > 0 )
         {
             (dec_step)--;
-             GPIO_SetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
+            
+					   GPIO_ResetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
         }
         if ( (dec_step) < 0 )
         {
             (dec_step)++;
-            GPIO_ResetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
+             GPIO_SetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
         }
 
    }

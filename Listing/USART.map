@@ -40,7 +40,7 @@ Section Cross References
     stm32f10x_it.o(.text) refers to stm32f10x_usart.o(.text) for USART_GetITStatus
     stm32f10x_it.o(.text) refers to stm32f10x_dma.o(.text) for DMA_Cmd
     stm32f10x_it.o(.text) refers to stm32f10x_tim.o(.text) for TIM_GetITStatus
-    stm32f10x_it.o(.text) refers to stm32f10x_gpio.o(.text) for GPIO_SetBits
+    stm32f10x_it.o(.text) refers to stm32f10x_gpio.o(.text) for GPIO_ResetBits
     stm32f10x_it.o(.text) refers to bsp_timbase.o(.text) for SetSpeed
     stm32f10x_it.o(.text) refers to command.o(.text) for CURRENT_POS_RA
     stm32f10x_it.o(.text) refers to bsp_timecover.o(.text) for ControlCover
