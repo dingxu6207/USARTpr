@@ -181,13 +181,13 @@ void BASIC_TIM_IRQHandler (void)
         if ( (ra_step) > 0 )
         {
             (ra_step)--;
-		         GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);
+		         GPIO_SetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);  //朝东走
         }
         if ( (ra_step) < 0 )
         {
             (ra_step)++;
            
-					  GPIO_SetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);
+					  GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);  //朝西走
         }
     }
 		
@@ -196,7 +196,7 @@ void BASIC_TIM_IRQHandler (void)
 			//ControlMotor(DISABLE);
 			SetSpeed(12);
 			uCountStep = 1;
-			GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);
+			GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);   //朝西走
     }
 		
 		 current_pos[0] = CURRENT_POS_RA ( target_ra, ra_step, RA_STP_ANGLE );   //更新当前指向
@@ -220,12 +220,12 @@ void COVER_TIM_IRQHandler(void)
         {
             (dec_step)--;
             
-					   GPIO_ResetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
+					   GPIO_SetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
         }
         if ( (dec_step) < 0 )
         {
             (dec_step)++;
-             GPIO_SetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
+             GPIO_ResetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
         }
 
    }
