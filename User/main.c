@@ -18,6 +18,7 @@
 #include "bsp_TiMbase.h" 
 #include "bsp_TimeCover.h" 
 #include "stdbool.h"
+#include "Exti44E.h"
 /**
   * @brief  主函数
   * @param  无
@@ -32,6 +33,7 @@ int main(void)
 	//s32 current_pos[2]= {0,0}, target_pos[2]= {0,0};
 	u8 decode_state=0;
 	bool runflag = false;
+	int AddStep = 0;
 	//s32 target_ra=0, target_dec=0;
 	//int ra_step=0, dec_step=0;
 
@@ -49,6 +51,8 @@ int main(void)
 
     BASIC_TIM_Init();
     Cover_TIM_Init();
+
+    EXTI_44E_Config();
    
 	
  	while(1)
@@ -81,12 +85,14 @@ int main(void)
           
             if(runflag == true) 
             {				        
-						//	  GOTO( &ra_step, &dec_step);    //执行GOTO任务
-	            runflag = false;						
-							ControlMotor(ENABLE);
-			  	     ControlCover(ENABLE);
-							SetSpeed(2000);
-							SetSpeedCover(2000);
+				//	  GOTO( &ra_step, &dec_step);    //执行GOTO任务
+	            runflag = false;	
+	            AddStep = (ra_step*1.5)/250;  //时间*步进
+	            ra_step = ra_step + AddStep;
+				ControlMotor(ENABLE);
+			  	ControlCover(ENABLE);
+				SetSpeed(2000);
+				SetSpeedCover(2000);
                // current_pos[0] = CURRENT_POS_RA ( target_ra, ra_step, RA_STP_ANGLE );   //更新当前指向
                // current_pos[1] = CURRENT_POS_DEC ( target_dec, dec_step, DEC_STP_ANGLE );
             }

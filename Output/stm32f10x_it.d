@@ -37,3 +37,4 @@
 ..\..\output\stm32f10x_it.o: ..\..\User\led\led.h
 ..\..\output\stm32f10x_it.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdbool.h
 ..\..\output\stm32f10x_it.o: ..\..\User\COMMAND\command.h
+..\..\output\stm32f10x_it.o: ..\..\User\exti\Exti44E.h

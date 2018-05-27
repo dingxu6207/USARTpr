@@ -32,6 +32,7 @@
 #include "led.h"
 #include "stdbool.h"
 #include "command.h"
+#include "Exti44E.h"
 
 extern void TimingDelay_Decrement(void);
 
@@ -238,6 +239,39 @@ void COVER_TIM_IRQHandler(void)
 				
 		TIM_ClearITPendingBit(TIM2 , TIM_FLAG_Update);
 	}
+}
+
+
+
+//限位保护
+void MIN_IRQHandler(void)
+{
+  //确保是否产生了EXTI Line中断
+	if(EXTI_GetITStatus(MIN_INT_EXTI_LINE) != RESET) 
+	{
+		if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0))
+		    GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);	
+		else
+		 	GPIO_SetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+		
+    //清除中断标志位
+		EXTI_ClearITPendingBit(MIN_INT_EXTI_LINE);     
+	}  
+}
+//限位保护
+void MAX_IRQHandler(void)
+{
+  //确保是否产生了EXTI Line中断
+	if(EXTI_GetITStatus(MAX_INT_EXTI_LINE) != RESET) 
+	{
+		if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1))
+		    GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);	
+		else
+		 	GPIO_SetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+		
+        //清除中断标志位
+		EXTI_ClearITPendingBit(MAX_INT_EXTI_LINE);     
+	}  
 }
 
 
