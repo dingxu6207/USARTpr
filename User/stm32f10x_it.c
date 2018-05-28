@@ -170,6 +170,7 @@ bool ledflag = true;
 extern int ra_step, dec_step;
 extern s32 current_pos[2], target_pos[2];
 extern s32 target_ra, target_dec;
+bool RARUNFlag = false;
 void BASIC_TIM_IRQHandler (void)
 {
 	if ( TIM_GetITStatus( BASIC_TIM, TIM_IT_Update) != RESET )
@@ -192,22 +193,22 @@ void BASIC_TIM_IRQHandler (void)
         }
     }
 		
-     if((ra_step) == 0 )	//到位了就切换到RA正常速度跟踪
+     if((ra_step == 0) && (RARUNFlag == false))	//到位了且没有导星，就切换到RA正常速度跟踪
     {		
-			//ControlMotor(DISABLE);
-			SetSpeed(12);
-			uCountStep = 1;
-			GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);   //朝西走
+		//ControlMotor(DISABLE);
+		SetSpeed(12);
+		uCountStep = 1;
+		GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);   //朝西走
     }
 		
 		 current_pos[0] = CURRENT_POS_RA ( target_ra, ra_step, RA_STP_ANGLE );   //更新当前指向
 		
-		    TIM_ClearITPendingBit(BASIC_TIM , TIM_FLAG_Update); 
+		 TIM_ClearITPendingBit(BASIC_TIM , TIM_FLAG_Update); 
 	}
 }
 
 u8 uCountStep1 = 1;
-
+bool CoverRunFlag = false;  //导星标志位
 void COVER_TIM_IRQHandler(void)
 {
 	if ( TIM_GetITStatus( TIM2, TIM_IT_Update) != RESET ) 
@@ -230,12 +231,12 @@ void COVER_TIM_IRQHandler(void)
         }
 
    }
-				if (dec_step == 0)
-				{
-            ControlCover(DISABLE);
-				}
+		if ((dec_step) == 0 && (CoverRunFlag == false)) //未导星
+		{
+            ControlCover(DISABLE);            
+		}
 				
-				current_pos[1] = CURRENT_POS_DEC ( target_dec, dec_step, DEC_STP_ANGLE );
+		current_pos[1] = CURRENT_POS_DEC ( target_dec, dec_step, DEC_STP_ANGLE );
 				
 		TIM_ClearITPendingBit(TIM2 , TIM_FLAG_Update);
 	}
@@ -251,12 +252,14 @@ void RAEAST_IRQHandler(void)
 	{
 		if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0) == 0)
 		{
+			RARUNFlag = true;
 			GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);
 			SetSpeed(12-6);
 			GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);   //朝西走			
 		}   	
 		else
 		{
+			RARUNFlag = false;
 			GPIO_SetBits(LED_GPIO_PORT, LED_GPIO_PIN);
 			SetSpeed(12);
 			GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);   //朝西走	
@@ -272,7 +275,8 @@ void RAWEST_IRQHandler(void)
 	if(EXTI_GetITStatus(RAWEST_INT_EXTI_LINE) != RESET) 
 	{
 		if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1) == 0)
-		{
+		{			 
+				RARUNFlag = true;
 				GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);
 				SetSpeed(12+6);
 				GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);   //朝西走			
@@ -280,6 +284,7 @@ void RAWEST_IRQHandler(void)
 		    	
 		else
 		{
+			RARUNFlag = false;
 			GPIO_SetBits(LED_GPIO_PORT, LED_GPIO_PIN);
 			SetSpeed(12);
 			GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);   //朝西走	
@@ -301,15 +306,17 @@ void DECUP_IRQHandler(void)
 	{
 		if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_3) == 0)
 		{
+			 CoverRunFlag = true;
 			GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);
-			GPIO_SetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
+			GPIO_ResetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
 			ControlCover(ENABLE);
-			SetSpeed(12);
+			SetSpeedCover(12);
 		}
 		    	
 		else
 			
 		{
+			 CoverRunFlag = false;
 			GPIO_SetBits(LED_GPIO_PORT, LED_GPIO_PIN);
 			ControlCover(DISABLE);
 		}
@@ -329,14 +336,16 @@ void DECDOWN_IRQHandler(void)
 	{
 		if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_4) == 0)
 		{
-				GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);
-				GPIO_ResetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
+				CoverRunFlag = true;
+			  GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+				GPIO_SetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
 				ControlCover(ENABLE);
-				SetSpeed(12);
+				SetSpeedCover(12);
 		}
 		    	
 		else
 		{
+			CoverRunFlag = false;
 			GPIO_SetBits(LED_GPIO_PORT, LED_GPIO_PIN);
 			ControlCover(DISABLE);
 		}
