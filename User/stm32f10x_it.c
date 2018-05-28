@@ -243,34 +243,106 @@ void COVER_TIM_IRQHandler(void)
 
 
 
-//限位保护
-void MIN_IRQHandler(void)
+//RAEAST
+void RAEAST_IRQHandler(void)
 {
   //确保是否产生了EXTI Line中断
-	if(EXTI_GetITStatus(MIN_INT_EXTI_LINE) != RESET) 
+	if(EXTI_GetITStatus(RAEAST_INT_EXTI_LINE) != RESET) 
 	{
-		if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0))
-		    GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);	
+		if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0) == 0)
+		{
+			GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+			SetSpeed(12-6);
+			GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);   //朝西走			
+		}   	
 		else
-		 	GPIO_SetBits(LED_GPIO_PORT, LED_GPIO_PIN);
-		
+		{
+			GPIO_SetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+			SetSpeed(12);
+			GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);   //朝西走	
+		}		
     //清除中断标志位
-		EXTI_ClearITPendingBit(MIN_INT_EXTI_LINE);     
+		EXTI_ClearITPendingBit(RAEAST_INT_EXTI_LINE);     
 	}  
 }
-//限位保护
-void MAX_IRQHandler(void)
+//RAWEST
+void RAWEST_IRQHandler(void)
 {
   //确保是否产生了EXTI Line中断
-	if(EXTI_GetITStatus(MAX_INT_EXTI_LINE) != RESET) 
+	if(EXTI_GetITStatus(RAWEST_INT_EXTI_LINE) != RESET) 
 	{
-		if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1))
-		    GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);	
+		if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1) == 0)
+		{
+				GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+				SetSpeed(12+6);
+				GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);   //朝西走			
+		}
+		    	
 		else
-		 	GPIO_SetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+		{
+			GPIO_SetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+			SetSpeed(12);
+			GPIO_ResetBits(DIR_GPIO_PORT, DIR_GPIO_PIN);   //朝西走	
+		}
+		 	
 		
         //清除中断标志位
-		EXTI_ClearITPendingBit(MAX_INT_EXTI_LINE);     
+		EXTI_ClearITPendingBit(RAWEST_INT_EXTI_LINE);     
+	}  
+}
+
+
+//-----------------------------------------------
+//DECUP
+void DECUP_IRQHandler(void)
+{
+  //确保是否产生了EXTI Line中断
+	if(EXTI_GetITStatus(DECUP_INT_EXTI_LINE) != RESET) 
+	{
+		if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_3) == 0)
+		{
+			GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+			GPIO_SetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
+			ControlCover(ENABLE);
+			SetSpeed(12);
+		}
+		    	
+		else
+			
+		{
+			GPIO_SetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+			ControlCover(DISABLE);
+		}
+		 	
+		
+        //清除中断标志位
+		EXTI_ClearITPendingBit(DECUP_INT_EXTI_LINE);     
+	}  
+}
+
+//-----------------------------------------------------------
+//DECDOWN
+void DECDOWN_IRQHandler(void)
+{
+  //确保是否产生了EXTI Line中断
+	if(EXTI_GetITStatus(DECDOWN_INT_EXTI_LINE) != RESET) 
+	{
+		if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_4) == 0)
+		{
+				GPIO_ResetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+				GPIO_ResetBits(DrDIR_GPIO_PORT, DrDIR_GPIO_PIN);
+				ControlCover(ENABLE);
+				SetSpeed(12);
+		}
+		    	
+		else
+		{
+			GPIO_SetBits(LED_GPIO_PORT, LED_GPIO_PIN);
+			ControlCover(DISABLE);
+		}
+		 		
+        //清除中断标志位
+		EXTI_ClearITPendingBit(DECDOWN_INT_EXTI_LINE);     
 	}  
 }
 

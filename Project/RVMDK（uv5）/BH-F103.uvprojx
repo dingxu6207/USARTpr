@@ -361,7 +361,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_MD, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS;..\..\User;..\..\Libraries\FWlib\inc;..\..\User\usart;..\..\User\SysTick;..\..\User\dma;..\..\User\led;..\..\User\COMMAND;..\..\User\TimBase;..\..\User\Contrlcover</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS;..\..\User;..\..\Libraries\FWlib\inc;..\..\User\usart;..\..\User\SysTick;..\..\User\dma;..\..\User\led;..\..\User\COMMAND;..\..\User\TimBase;..\..\User\Contrlcover;..\..\User\exti</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -618,6 +618,11 @@
               <FileName>bsp_TimeCover.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\Contrlcover\bsp_TimeCover.c</FilePath>
+            </File>
+            <File>
+              <FileName>Exti44E.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\exti\Exti44E.c</FilePath>
             </File>
           </Files>
         </Group>
