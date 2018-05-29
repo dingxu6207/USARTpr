@@ -19,6 +19,7 @@
 #include "bsp_TimeCover.h" 
 #include "stdbool.h"
 #include "Exti44E.h"
+#include <stdlib.h>
 /**
   * @brief  主函数
   * @param  无
@@ -88,7 +89,7 @@ int main(void)
 				//	  GOTO( &ra_step, &dec_step);    //执行GOTO任务
 	            runflag = false;	
 	            AddStep = (ra_step*1.5)/250;  //时间*步进
-	            ra_step = ra_step + AddStep;
+	            ra_step = ra_step + abs(AddStep);
 				ControlMotor(ENABLE);
 			  	ControlCover(ENABLE);
 				SetSpeed(2000);
